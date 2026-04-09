@@ -1,5 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
+import EventMgmtCard from "./EventMgmtCard";
+
 //based on ..\client\App.js for parity
 function App() {
   return (
@@ -15,7 +17,7 @@ function App() {
       </header>
 
       <section className="main">
-
+        <EventMgmtCard />
       </section>
     </div>
   );
