@@ -1,23 +1,22 @@
 import logo from './logo.svg';
 import './App.css';
-
+//based on ..\client\App.js for parity
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header class="header">
+        <nav class="header-menu">
+          <ul class="header-menu__list">
+            <li class="header-menu__list-item">Current</li>
+            <li class="header-menu__list-item">Previous</li>
+            <li class="header-menu__list-item">Create</li>
+          </ul>
+        </nav>
       </header>
+
+      <section className="main">
+
+      </section>
     </div>
   );
 }
