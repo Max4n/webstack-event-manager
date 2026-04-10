@@ -4,6 +4,9 @@ import EventMgmtCard from "./EventMgmtCard";
 
 //based on ..\client\App.js for parity
 function App() {
+
+  var path = window.location.pathname;
+
   return (
     <div className="App">
       <header class="header">
@@ -17,7 +20,9 @@ function App() {
       </header>
 
       <section className="main">
+        { path == "/" &&
         <EventMgmtCard />
+        }
       </section>
     </div>
   );
