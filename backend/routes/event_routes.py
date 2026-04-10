@@ -2,8 +2,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import sys
 sys.path.insert(1, '../')
-from db.py import get_db_connection
-from utils.auth_middleware import admin_required
+from db import get_db_connection
+from auth_middleware import admin_required
 
 event_bp = Blueprint("events", __name__)
 
