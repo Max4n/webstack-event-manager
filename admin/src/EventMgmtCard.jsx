@@ -3,8 +3,6 @@ import './EventMgmtCard.css';
 
 export default function EventMgmtCard() {
 
-    var path = window.location.pathname;
-
     return(
         <div>
             <div className="card">

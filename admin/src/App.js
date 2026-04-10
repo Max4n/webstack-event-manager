@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import EventMgmtCard from "./EventMgmtCard";
+import EventMgmtDetails from "./EventMgmtDetails";
 
 //based on ..\client\App.js for parity
 function App() {
@@ -22,6 +23,9 @@ function App() {
       <section className="main">
         { path == "/" &&
         <EventMgmtCard />
+        }
+        { path == "/details" &&
+        <EventMgmtDetails />
         }
       </section>
     </div>
