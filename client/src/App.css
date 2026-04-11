@@ -5,16 +5,33 @@
 }
 
 .header {
-  margin-top: 10px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid;
-  border-color: #000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding-top: 20px;
 }
 
-.header-menu__list {
-  max-width: 800px;
+.header__inner {
   display: flex;
-  justify-content: space-between;
-  margin: 0 50px;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 2px solid black;
+}
+
+.header-menu {
+  margin-right: auto;
+}
+
+.menu__list {
+  display: flex;
   list-style: none;
+  margin-left: 100px;
+  gap: 40px;
+}
+
+.header-search { 
+  padding: 6px;
+  margin-right: 60px; 
+  width: 200px;
 }
