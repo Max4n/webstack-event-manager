@@ -12,8 +12,11 @@ def get_events():
     conn = get_db_connection()
     cur = conn.cursor()
 
+    # We use TO_CHAR to format the date and time as strings so JSON can read them!
     cur.execute("""
-        SELECT e.event_id, e.title, e.description, e.event_date, e.event_time,
+        SELECT e.event_id, e.title, e.description, 
+               TO_CHAR(e.event_date, 'YYYY-MM-DD') AS event_date, 
+               TO_CHAR(e.event_time, 'HH24:MI:SS') AS event_time,
                c.name AS category, v.venue_name, v.address, v.latitude, v.longitude
         FROM events e
         LEFT JOIN categories c ON e.category_id = c.category_id
@@ -54,7 +57,7 @@ def get_event(event_id):
 @admin_required
 def create_event():
     data = request.get_json()
-    current_user = get_jwt_identity()
+    current_user_id = get_jwt_identity()
 
     title = data.get("title")
     description = data.get("description")
@@ -69,11 +72,15 @@ def create_event():
     conn = get_db_connection()
     cur = conn.cursor()
 
+    # We use TO_CHAR in the RETURNING clause so jsonify() doesn't crash!
     cur.execute("""
         INSERT INTO events (title, description, event_date, event_time, category_id, venue_id, created_by)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
-        RETURNING *
-    """, (title, description, event_date, event_time, category_id, venue_id, current_user["user_id"]))
+        RETURNING event_id, title, description, 
+                  TO_CHAR(event_date, 'YYYY-MM-DD') AS event_date, 
+                  TO_CHAR(event_time, 'HH24:MI:SS') AS event_time,
+                  category_id, venue_id, created_by
+    """, (title, description, event_date, event_time, category_id, venue_id, current_user_id))
 
     new_event = cur.fetchone()
     conn.commit()
@@ -88,39 +95,42 @@ def create_event():
 def update_event(event_id):
     data = request.get_json()
 
+    title = data.get("title")
+    description = data.get("description")
+    event_date = data.get("event_date")
+    event_time = data.get("event_time")
+    category_id = data.get("category_id")
+    venue_id = data.get("venue_id")
+
     conn = get_db_connection()
     cur = conn.cursor()
 
-    cur.execute("""
-        UPDATE events
-        SET title = %s,
-            description = %s,
-            event_date = %s,
-            event_time = %s,
-            category_id = %s,
-            venue_id = %s
-        WHERE event_id = %s
-        RETURNING *
-    """, (
-        data.get("title"),
-        data.get("description"),
-        data.get("event_date"),
-        data.get("event_time"),
-        data.get("category_id"),
-        data.get("venue_id"),
-        event_id
-    ))
+    try:
+        # Notice the TO_CHAR formatting in the RETURNING block below!
+        cur.execute("""
+            UPDATE events
+            SET title = %s, description = %s, event_date = %s, event_time = %s, category_id = %s, venue_id = %s
+            WHERE event_id = %s
+            RETURNING event_id, title, description, 
+                      TO_CHAR(event_date, 'YYYY-MM-DD') AS event_date, 
+                      TO_CHAR(event_time, 'HH24:MI:SS') AS event_time, 
+                      category_id, venue_id, created_by
+        """, (title, description, event_date, event_time, category_id, venue_id, event_id))
 
-    updated_event = cur.fetchone()
-    conn.commit()
+        updated_event = cur.fetchone()
+        conn.commit()
 
-    cur.close()
-    conn.close()
+        if not updated_event:
+            return jsonify({"error": "Event not found"}), 404
 
-    if not updated_event:
-        return jsonify({"error": "Event not found"}), 404
+        return jsonify({"message": "Event updated successfully", "event": updated_event}), 200
 
-    return jsonify({"message": "Event updated successfully", "event": updated_event}), 200
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cur.close()
+        conn.close()
 
 @event_bp.route("/<int:event_id>", methods=["DELETE"])
 @admin_required

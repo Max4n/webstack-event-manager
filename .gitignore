@@ -1,0 +1,14 @@
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/.env
+
+# Node/React
+node_modules/
+admin/node_modules/
+client/node_modules/
+.DS_Store
+
+# Build files
+admin/build/
+client/build/
